@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بوتيك رُوح | Rouh Boutique — عرض المشروع ومنظومة التشغيل الذكية</title>
+  <meta name="description" content="صفحة تعريفية لمشروع بوتيك رُوح (Rouh Boutique) — متجر إلكتروني متكامل للأزياء النسائية والعطور والإكسسوارات مع منظومة إدارة طلبات ومخزون مؤتمتة عبر مجموعات تلغرام المقسمة." />
+  <meta name="theme-color" content="#F7F2EB" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════════
+       هوية وألوان متجر رُوح الفعلية (مستخرجة من src/app/globals.css)
+    ═══════════════════════════════════════════════════════════════════════ */
+    :root {
+      color-scheme: light;
+      --rouh-page-bg: #F7F2EB;
+      --rouh-card-bg: #FFFFFF;
+      --rouh-featured-bg: #EADBD3;
+      --rouh-muted-bg: #F2E7DE;
+      --rouh-admin-bg: #FAF8F5;
+      --rouh-footer-bg: #493C3A;
+      --rouh-ink: #493C3A;
+      --rouh-text: #594644;
+      --rouh-muted-text: #816F6B;
+      --rouh-primary: #985E60;
+      --rouh-primary-hover: #824E51;
+      --rouh-secondary: #C98D87;
+      --rouh-nav-clay: #D6A49B;
+      --rouh-border: #E9D9C9;
+      --rouh-alert: #A94F52;
+      --rouh-success: #1F6A45;
+      --rouh-success-bg: #E7F5ED;
+
+      --font-sans: 'Segoe UI', Tahoma, Arial, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+      --shadow-sm: 0 6px 20px rgba(73, 60, 58, 0.05);
+      --shadow-md: 0 16px 40px rgba(73, 60, 58, 0.09);
+      --shadow-lg: 0 24px 60px rgba(50, 36, 31, 0.14);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      background-color: var(--rouh-page-bg);
+      color: var(--rouh-text);
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      overflow-x: hidden;
+      background-color: var(--rouh-page-bg);
+      color: var(--rouh-text);
+      font-family: var(--font-sans);
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       الحاوية الرئيسية لصفحة العرض الواحدة (Unified Single-Page Canvas)
+    ═══════════════════════════════════════════════════════════════════════ */
+    .page-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: clamp(18px, 3.5vw, 40px) clamp(16px, 4vw, 44px) 64px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(24px, 3.5vw, 36px);
+    }
+
+    /* الشريط العلوي البسيط بدون تقسيمات مشتتة */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 22px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--rouh-border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-arabic-logo {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--rouh-ink);
+      line-height: 1;
+    }
+
+    .brand-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--rouh-border);
+    }
+
+    .brand-latin {
+      font-family: var(--font-serif);
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
+      color: var(--rouh-muted-text);
+      text-transform: uppercase;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 22px;
+      background-color: var(--rouh-primary);
+      color: #FFFFFF;
+      border: 1px solid var(--rouh-primary);
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+      box-shadow: 0 6px 18px rgba(152, 94, 96, 0.22);
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--rouh-primary-hover);
+      border-color: var(--rouh-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(152, 94, 96, 0.3);
+    }
+
+    .btn-dark-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 0 28px;
+      background-color: var(--rouh-ink);
+      color: var(--rouh-page-bg);
+      border: 1px solid var(--rouh-ink);
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 180ms ease;
+    }
+
+    .btn-dark-pill:hover {
+      background-color: #362C2A;
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(73, 60, 58, 0.22);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       البطاقة الافتتاحية الموحدة (Hero + فكرة المتجر في كتلة واحدة)
+    ═══════════════════════════════════════════════════════════════════════ */
+    .hero-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #FFFFFF 0%, #FAF8F5 65%, #EADBD3 100%);
+      border: 1px solid var(--rouh-border);
+      border-radius: 26px;
+      padding: clamp(26px, 4.5vw, 52px);
+      box-shadow: var(--shadow-md);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (min-width: 960px) {
+      .hero-card {
+        grid-template-columns: 1.25fr 0.75fr;
+      }
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background-color: var(--rouh-featured-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 999px;
+      color: var(--rouh-ink);
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--rouh-primary);
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(2rem, 4.2vw, 3.25rem);
+      color: var(--rouh-ink);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero-title span {
+      display: block;
+      margin-top: 6px;
+      font-family: var(--font-serif);
+      font-size: clamp(1.15rem, 2vw, 1.55rem);
+      font-weight: 400;
+      color: var(--rouh-primary);
+    }
+
+    .hero-desc {
+      margin: 18px 0 0;
+      font-size: 1.02rem;
+      color: var(--rouh-text);
+      line-height: 1.85;
+      max-width: 62ch;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .hero-highlights-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-stat {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--rouh-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .mini-stat strong {
+      font-size: 1.15rem;
+      color: var(--rouh-ink);
+    }
+
+    .mini-stat span {
+      font-size: 0.8rem;
+      color: var(--rouh-muted-text);
+      line-height: 1.45;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       القلب التشغيلي: منظومة التلغرام والمجموعة المقسمة (التركيز الرئيسي)
+    ═══════════════════════════════════════════════════════════════════════ */
+    .telegram-showcase-box {
+      background-color: var(--rouh-card-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 26px;
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .box-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--rouh-border);
+    }
+
+    .box-header h2 {
+      margin: 6px 0 0;
+      font-size: clamp(1.45rem, 2.6vw, 2.1rem);
+      color: var(--rouh-ink);
+      line-height: 1.3;
+    }
+
+    .box-header p {
+      margin: 0;
+      max-width: 54ch;
+      color: var(--rouh-muted-text);
+      font-size: 0.94rem;
+    }
+
+    /* الركائز الثلاث لمنظومة التلغرام */
+    .tg-pillars {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 860px) {
+      .tg-pillars {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .tg-pillar-card {
+      background-color: var(--rouh-admin-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tg-pillar-card.featured {
+      background-color: var(--rouh-featured-bg);
+      border-color: var(--rouh-secondary);
+    }
+
+    .tg-pillar-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tg-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background-color: #FFFFFF;
+      border: 1px solid var(--rouh-border);
+      color: var(--rouh-primary);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .tg-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .tg-pillar-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--rouh-ink);
+    }
+
+    .tg-pillar-card p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--rouh-text);
+      line-height: 1.7;
+    }
+
+    /* محاكي المجموعة المقسمة وبوت التلغرام التفاعلي */
+    .tg-simulator {
+      display: grid;
+      grid-template-columns: 1fr;
+      background-color: var(--rouh-admin-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 22px;
+      overflow: hidden;
+    }
+
+    @media (min-width: 920px) {
+      .tg-simulator {
+        grid-template-columns: 300px 1fr;
+      }
+    }
+
+    /* القائمة الجانبية لمواضيع المجموعة المقسمة (Forum Threads) */
+    .tg-threads-sidebar {
+      background-color: #F3ECE3;
+      border-bottom: 1px solid var(--rouh-border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    @media (min-width: 920px) {
+      .tg-threads-sidebar {
+        border-bottom: 0;
+        border-left: 1px solid var(--rouh-border);
+      }
+    }
+
+    .tg-group-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rouh-border);
+    }
+
+    .tg-group-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background-color: var(--rouh-ink);
+      color: var(--rouh-page-bg);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .tg-group-header div strong {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--rouh-ink);
+    }
+
+    .tg-group-header div small {
+      color: var(--rouh-muted-text);
+      font-size: 0.72rem;
+    }
+
+    .tg-thread-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tg-thread-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--rouh-text);
+      font-size: 0.83rem;
+      font-weight: 600;
+      text-align: right;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .tg-thread-btn:hover {
+      background-color: rgba(255, 255, 255, 0.65);
+    }
+
+    .tg-thread-btn.is-active {
+      background-color: #FFFFFF;
+      border-color: var(--rouh-primary);
+      color: var(--rouh-ink);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tg-thread-badge {
+      padding: 2px 8px;
+      border-radius: 99px;
+      background-color: var(--rouh-featured-bg);
+      color: var(--rouh-ink);
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .tg-thread-btn.is-active .tg-thread-badge {
+      background-color: var(--rouh-primary);
+      color: #FFFFFF;
+    }
+
+    /* نافذة الرسائل والأزرار التفاعلية للبوت */
+    .tg-chat-area {
+      padding: clamp(18px, 3vw, 28px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      background-color: var(--rouh-admin-bg);
+    }
+
+    .tg-chat-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rouh-border);
+    }
+
+    .tg-chat-topbar strong {
+      font-size: 0.95rem;
+      color: var(--rouh-ink);
+    }
+
+    .tg-env-code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background-color: var(--rouh-muted-bg);
+      color: var(--rouh-primary);
+      direction: ltr;
+    }
+
+    .tg-messages-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (min-width: 720px) {
+      .tg-messages-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+    }
+
+    /* رسالة الطلب التفاعلية في تلغرام */
+    .tg-bot-bubble {
+      background-color: #FFFFFF;
+      border: 1px solid var(--rouh-border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tg-bot-sender {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.75rem;
+      color: var(--rouh-primary);
+      font-weight: 700;
+    }
+
+    .tg-message-lines {
+      font-size: 0.85rem;
+      color: var(--rouh-ink);
+      line-height: 1.75;
+      white-space: pre-line;
+      padding: 12px;
+      background-color: var(--rouh-admin-bg);
+      border-radius: 12px;
+      border: 1px solid #EFE6DD;
+    }
+
+    .tg-inline-keyboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tg-inline-btn {
+      min-height: 40px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--rouh-primary);
+      background-color: var(--rouh-page-bg);
+      color: var(--rouh-ink);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .tg-inline-btn:hover {
+      background-color: var(--rouh-primary);
+      color: #FFFFFF;
+    }
+
+    .tg-inline-btn.cancel {
+      border-color: #E2C2C3;
+      color: var(--rouh-alert);
+      background-color: #FFF8F8;
+    }
+
+    .tg-inline-btn.cancel:hover {
+      background-color: var(--rouh-alert);
+      color: #FFFFFF;
+    }
+
+    /* بطاقة تنبيه المخزون وحالة المزامنة مع قاعدة البيانات */
+    .tg-side-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tg-stock-alert-card {
+      background-color: #FFF9F5;
+      border: 1px solid #E9D2C5;
+      border-right: 4px solid var(--rouh-primary);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .tg-stock-alert-card strong {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--rouh-ink);
+      margin-bottom: 6px;
+    }
+
+    .tg-stock-alert-card p {
+      margin: 0;
+      font-size: 0.79rem;
+      color: var(--rouh-text);
+      line-height: 1.65;
+    }
+
+    .tg-db-sync-card {
+      background-color: #FFFFFF;
+      border: 1px solid var(--rouh-border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 0.79rem;
+    }
+
+    .tg-db-sync-card strong {
+      display: block;
+      color: var(--rouh-ink);
+      margin-bottom: 8px;
+      font-size: 0.83rem;
+    }
+
+    .sync-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed var(--rouh-border);
+    }
+
+    .sync-row:last-child {
+      border-bottom: 0;
+    }
+
+    .sync-row span {
+      color: var(--rouh-muted-text);
+    }
+
+    .sync-row b {
+      color: var(--rouh-ink);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .tg-sim-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--rouh-border);
+      font-size: 0.78rem;
+      color: var(--rouh-muted-text);
+    }
+
+    .tg-reset-btn {
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--rouh-border);
+      background-color: #FFFFFF;
+      color: var(--rouh-ink);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tg-reset-btn:hover {
+      background-color: var(--rouh-featured-bg);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       تحديات المتجر والحلول المنفذة + أبرز خصائص المتجر (في شبكة واحدة مدمجة)
+    ═══════════════════════════════════════════════════════════════════════ */
+    .dual-bento {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 920px) {
+      .dual-bento {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .bento-panel {
+      background-color: var(--rouh-card-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 24px;
+      padding: clamp(22px, 3.5vw, 34px);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .bento-panel h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--rouh-ink);
+    }
+
+    .bento-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .bento-list li {
+      padding: 13px 15px;
+      background-color: var(--rouh-admin-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 14px;
+      font-size: 0.87rem;
+      line-height: 1.65;
+    }
+
+    .bento-list li strong {
+      display: block;
+      color: var(--rouh-ink);
+      margin-bottom: 2px;
+      font-size: 0.92rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       التقنيات المستخدمة والهوية اللونية (مدمجة وأنيقة)
+    ═══════════════════════════════════════════════════════════════════════ */
+    .tech-and-identity {
+      background-color: var(--rouh-card-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 26px;
+      padding: clamp(24px, 4vw, 40px);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .tech-pills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (min-width: 680px) {
+      .tech-pills-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .tech-pills-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .tech-item {
+      padding: 14px;
+      background-color: var(--rouh-admin-bg);
+      border: 1px solid var(--rouh-border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tech-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      direction: ltr;
+    }
+
+    .tech-item-top strong {
+      font-size: 0.88rem;
+      color: var(--rouh-ink);
+    }
+
+    .tech-item-top code {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 99px;
+      background-color: var(--rouh-featured-bg);
+      color: var(--rouh-primary);
+    }
+
+    .tech-item span {
+      font-size: 0.78rem;
+      color: var(--rouh-muted-text);
+      line-height: 1.5;
+    }
+
+    /* الهوية اللونية المستخرجة */
+    .palette-strip {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rouh-border);
+    }
+
+    @media (min-width: 720px) {
+      .palette-strip {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+    }
+
+    .color-chip {
+      border: 1px solid var(--rouh-border);
+      border-radius: 14px;
+      overflow: hidden;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      padding: 0;
+      text-align: right;
+      transition: transform 150ms ease;
+    }
+
+    .color-chip:hover {
+      transform: translateY(-2px);
+    }
+
+    .color-preview {
+      height: 54px;
+      width: 100%;
+      border-bottom: 1px solid var(--rouh-border);
+    }
+
+    .color-meta {
+      padding: 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .color-meta b {
+      font-size: 0.76rem;
+      color: var(--rouh-ink);
+    }
+
+    .color-meta code {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--rouh-primary);
+      direction: ltr;
+      text-align: right;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════
+       الخاتمة والدعوة لزيارة المتجر
+    ═══════════════════════════════════════════════════════════════════════ */
+    .final-cta-banner {
+      background-color: var(--rouh-footer-bg);
+      color: #F5EEE9;
+      border-radius: 26px;
+      padding: clamp(28px, 4.5vw, 48px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .final-cta-banner h2 {
+      margin: 0 0 6px;
+      font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+      color: #FFFFFF;
+    }
+
+    .final-cta-banner p {
+      margin: 0;
+      color: var(--rouh-featured-bg);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 480px) {
+      .hero-actions,
+      .final-cta-banner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .top-bar {
+        padding: 12px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="page-shell">
+    <!-- الشريط العلوي المختصر -->
+    <header class="top-bar">
+      <div class="brand-identity">
+        <span class="brand-arabic-logo">رُوح</span>
+        <span class="brand-divider" aria-hidden="true"></span>
+        <span class="brand-latin">Rouh Boutique</span>
+      </div>
+
+      <a
+        href="https://rouh-boutique.netlify.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary"
+      >
+        <span>تصفح المتجر الحي</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <!-- 1. البطاقة التعريفية الموحدة للمشروع -->
+    <section class="hero-card" aria-label="تعريف مشروع بوتيك روح">
+      <div>
+        <div class="badge-pill">
+          <span class="badge-dot" aria-hidden="true"></span>
+          <span>ECOMMERCE PROJECT / CASE STUDY</span>
+        </div>
+
+        <h1 class="hero-title">
+          بوتيك رُوح — Rouh Boutique
+          <span>A Modern Digital Boutique &amp; Automated Operations Platform</span>
+        </h1>
+
+        <p class="hero-desc">
+          منصة تجارة إلكترونية متكاملة متخصصة في الأزياء النسائية المحتشمة (الشالات والحجابات) والعطور والإكسسوارات وبوكسات الهدايا. صُمم المشروع ليجمع بين <strong>واجهة تسوق هادئة بأسلوب المجلات الافتتاحية (Editorial Storefront)</strong> وبين <strong>منظومة تشغيلية مؤتمتة بالكامل</strong> تدير المخزون والحجوزات والطلبات لحظياً عبر لوحة تحكم متجاوبة وبوت تلغرام تفاعلي يعمل داخل مجموعة مقسمة إلى مواضيع.
+        </p>
+
+        <div class="hero-actions">
+          <a
+            href="https://rouh-boutique.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-dark-pill"
+          >
+            <span>Explore Live Project — زيارة المتجر</span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-highlights-strip">
+        <div class="mini-stat">
+          <strong>مجموعة تلغرام مقسمة</strong>
+          <span>6 مواضيع مستقلة (Topics) لفرز الطلبات الجديدة، التجهيز، التوصيل، المرتجعات، والمخزون.</span>
+        </div>
+        <div class="mini-stat">
+          <strong>إدارة طلبات بالـ Webhook</strong>
+          <span>أزرار تفاعلية داخل تلغرام لتمرير حالة الطلب وتحديث المخزون دون مغادرة المحادثة.</span>
+        </div>
+        <div class="mini-stat">
+          <strong>حجز مخزون Serializable</strong>
+          <span>فصل دقيق بين المخزون المتاح والمحجوز لمنع البيع الزائد للمنتجات الفردية والبوكسات.</span>
+        </div>
+        <div class="mini-stat">
+          <strong>تغليف هدايا وبوكسات</strong>
+          <span>تخصيص صناديق هدايا متعددة داخل السلة مع رسائل إهداء وتسعير توصيل حسب المحافظة.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. التركيز الرئيسي: منظومة المجموعة المقسمة وبوت التلغرام للإشعارات وإدارة الطلبات والمخزون -->
+    <section class="telegram-showcase-box" aria-labelledby="tg-heading">
+      <div class="box-header">
+        <div>
+          <span class="badge-pill" style="margin-bottom: 6px;">الأتمتة التشغيلية الفورية (Telegram Operations Engine)</span>
+          <h2 id="tg-heading">المجموعة المقسمة وبوت التلغرام لإدارة الطلبات وتنبيهات المخزون</h2>
+        </div>
+        <p>
+          بدلاً من تكدّس الإشعارات في محادثة واحدة مزدحمة، يعتمد المتجر على <strong>مجموعة تلغرام مقسمة إلى مواضيع (Forum Group Topics)</strong> مربوطة ثنائياً مع قاعدة البيانات عبر <code>/api/telegram-webhook</code>.
+        </p>
+      </div>
+
+      <!-- الركائز الثلاث لمنظومة التلغرام -->
+      <div class="tg-pillars">
+        <article class="tg-pillar-card featured">
+          <div class="tg-pillar-top">
+            <div class="tg-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <h3>1. المجموعة المقسمة (6 مواضيع مستقلة)</h3>
+          </div>
+          <p>
+            يوجه النظام كل إشعار تلقائياً عبر <code>message_thread_id</code> إلى الموضوع المخصص له داخل المجموعة: موضوع <strong>الطلبات الجديدة</strong>، موضوع <strong>قيد التجهيز والجاهزة</strong>، موضوع <strong>مع المندوب</strong>، موضوع <strong>تم التوصيل</strong>، موضوع <strong>المرتجعات</strong>، وموضوع <strong>تنبيهات المخزون</strong>.
+          </p>
+        </article>
+
+        <article class="tg-pillar-card">
+          <div class="tg-pillar-top">
+            <div class="tg-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+              </svg>
+            </div>
+            <h3>2. إدارة الطلبات التفاعلية من داخل التلغرام</h3>
+          </div>
+          <p>
+            يصل كل طلب مرفقاً بأزرار تفاعلية (Inline Keyboard). عند ضغط الموظف على زر مثل <strong>«🧺 بدء التجهيز»</strong> أو <strong>«🚚 تسليم للمندوب»</strong>، يتحقق الـ Webhook من التوقيع الأمني <code>SHA-256</code> وينقل الطلب للمرحلة التالية والموضوع التالي مع تحديث الرسالة السابقة تلقائياً.
+          </p>
+        </article>
+
+        <article class="tg-pillar-card">
+          <div class="tg-pillar-top">
+            <div class="tg-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+            <h3>3. تنبيهات انخفاض المخزون وتسويته تلقائياً</h3>
+          </div>
+          <p>
+            بمجرد حجز طلب يؤدي لوصول الكمية المتاحة (<code>availableQuantity - reservedQuantity</code>) إلى حد التنبيه <code>lowStockThreshold</code>، يرسل البوت إشعاراً فورياً لموضوع المخزون، وعند اكتمال الطلب أو إلغائه/إرجاعه يتم خصم المخزون أو تحرير الحجز تلقائياً.
+          </p>
+        </article>
+      </div>
+
+      <!-- محاكي حي وتفاعلي للمجموعة المقسمة وبوت التلغرام (مستخرج من الكود الفعلي) -->
+      <div class="tg-simulator" aria-label="محاكي تفاعلي لمجموعة التلغرام المقسمة">
+        <aside class="tg-threads-sidebar">
+          <div class="tg-group-header">
+            <div class="tg-group-avatar">رُوح</div>
+            <div>
+              <strong>مجموعة عمليات بوتيك رُوح</strong>
+              <small>Telegram Forum Group (6 Topics)</small>
+            </div>
+          </div>
+
+          <div class="tg-thread-list" role="tablist" aria-label="مواضيع مجموعة التلغرام">
+            <button type="button" class="tg-thread-btn is-active" data-stage="NEW">
+              <span>🛍️ الطلبات الجديدة</span>
+              <span class="tg-thread-badge" id="badge-NEW">نشط</span>
+            </button>
+            <button type="button" class="tg-thread-btn" data-stage="PREPARING">
+              <span>🧺 قيد التجهيز والجاهزة</span>
+              <span class="tg-thread-badge" id="badge-PREPARING">Topic 2</span>
+            </button>
+            <button type="button" class="tg-thread-btn" data-stage="SHIPPED">
+              <span>🚚 مع المندوب (التوصيل)</span>
+              <span class="tg-thread-badge" id="badge-SHIPPED">Topic 3</span>
+            </button>
+            <button type="button" class="tg-thread-btn" data-stage="COMPLETED">
+              <span>📦 الطلبات الموصلة</span>
+              <span class="tg-thread-badge" id="badge-COMPLETED">Topic 4</span>
+            </button>
+            <button type="button" class="tg-thread-btn" data-stage="RETURNED">
+              <span>↩️ المرتجعات والملغاة</span>
+              <span class="tg-thread-badge" id="badge-RETURNED">Topic 5</span>
+            </button>
+            <button type="button" class="tg-thread-btn" data-stage="INVENTORY">
+              <span>⚠️ تنبيهات المخزون المنخفض</span>
+              <span class="tg-thread-badge" id="badge-INVENTORY">تنبيه</span>
+            </button>
+          </div>
+        </aside>
+
+        <div class="tg-chat-area">
+          <div class="tg-chat-topbar">
+            <strong id="activeThreadTitle">🛍️ الموضوع الحالي: الطلبات الجديدة (New Orders Thread)</strong>
+            <span class="tg-env-code" id="activeThreadEnv">TELEGRAM_NEW_ORDERS_THREAD_ID</span>
+          </div>
+
+          <div class="tg-messages-grid">
+            <!-- بطاقة رسالة البوت التفاعلية -->
+            <div class="tg-bot-bubble">
+              <div class="tg-bot-sender">
+                <span>🤖 Rouh Operations Bot</span>
+                <span id="simStatusLabel">الحالة: جديد (NEW)</span>
+              </div>
+
+              <div class="tg-message-lines" id="simMessageBody">🛍️ طلب جديد: #R9K4M2A8
+الاسم: سارة أحمد
+الهاتف: 0770XXXXXXX
+المحافظة: كربلاء
+العنوان: حي الحسين — قرب الشارع العام
+المنتجات:
+• شال كشمير روز × 2 — 15,000 د.ع
+• بوكس هدايا رُوح الملكي × 1 — 35,000 د.ع
+الإجمالي: 68,000 د.ع</div>
+
+              <div class="tg-inline-keyboard" id="simKeyboard">
+                <!-- يتم توليد الأزرار التفاعلية المطابقة للكود الفعلي عبر الجافاسكربت -->
+              </div>
+            </div>
+
+            <!-- بطاقة تنبيه المخزون وحالة قاعدة البيانات -->
+            <div class="tg-side-cards">
+              <div class="tg-stock-alert-card">
+                <strong>⚠️ إشعار موضوع تنبيهات المخزون (TELEGRAM_INVENTORY_THREAD_ID)</strong>
+                <p id="simStockAlertText">
+                  • شال كشمير روز (SKU: ROUH-SH-ROSE): المتاح 2، حد التنبيه 3 — أُرسل تلقائياً فور حجز الكمية في الطلب.
+                </p>
+              </div>
+
+              <div class="tg-db-sync-card">
+                <strong>مزامنة قاعدة البيانات (PostgreSQL + Prisma)</strong>
+                <div class="sync-row">
+                  <span>حالة الطلب (OrderStatus)</span>
+                  <b id="dbOrderStatus">NEW</b>
+                </div>
+                <div class="sync-row">
+                  <span>حالة التوصيل (DeliveryStatus)</span>
+                  <b id="dbDeliveryStatus">PENDING</b>
+                </div>
+                <div class="sync-row">
+                  <span>حركة المخزون (StockMovement)</span>
+                  <b id="dbStockMovement">RESERVATION (-3)</b>
+                </div>
+                <div class="sync-row">
+                  <span>سجل التدقيق (AuditLog)</span>
+                  <b id="dbAuditSource">source: "telegram"</b>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tg-sim-footer">
+            <span>💡 جرّب الضغط على أزرار البوت أعلاه أو تبديل المواضيع لمحاكاة انتقال الطلب الفعلي بين المواضيع المقسمة.</span>
+            <button type="button" class="tg-reset-btn" id="resetSimBtn">إعادة تعيين المحاكاة ↺</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ملخص مدمج: كيف يعالج المتجر تحديات التسوق والإدارة + أبرز المزايا -->
+    <section class="dual-bento" aria-label="مزايا المتجر والحلول الهندسية">
+      <div class="bento-panel">
+        <span class="badge-pill" style="align-self: flex-start; margin-bottom: 0;">واجهة المتجر وتجربة الزبون</span>
+        <h3>تجربة تسوق أنيقة ومصممة بعناية</h3>
+        <ul class="bento-list">
+          <li>
+            <strong>تصميم مجلة افتتاحي وتجاوب مزدوج (Desktop &amp; Mobile Shells)</strong>
+            واجهة عربية متكاملة تعرض غلاف مجلة متحرك، حملات إعلانية مجدولة، وتبديل سلس في الهاتف بين العرض الشبكي (عمودين) والعرض الافتتاحي الكامل.
+          </li>
+          <li>
+            <strong>عائلات المنتجات وتعدد الألوان (Multi-Hex Color Swatches)</strong>
+            ربط الموديلات ضمن <code>ProductFamily</code> مع دعم الألوان المفردة والمركبة لكل منتج، وصور مخصصة لكل لون وقياس (SKU).
+          </li>
+          <li>
+            <strong>البوكسات المنسقة وتغليف الهدايا المخصص (Gift Packaging)</strong>
+            إمكانية شراء مجموعات منسقة (<code>CURATED</code>) أو بوكسات بسعر موحد (<code>BUNDLE</code>)، مع تخصيص صناديق تغليف هدايا متعددة داخل السلة وإضافة بطاقة إهداء لكل صندوق.
+          </li>
+          <li>
+            <strong>إضافة سريعة (Quick-Add) وحسابات زبائن</strong>
+            نافذة سريعة لاختيار اللون والقياس مع اقتراحات منتجات مكملة، المفضلة (Wishlist)، وحساب زبون لمتابعة الطلبات السابقة.
+          </li>
+        </ul>
+      </div>
+
+      <div class="bento-panel">
+        <span class="badge-pill" style="align-self: flex-start; margin-bottom: 0;">الهندسة الخلفية ولوحة الإدارة</span>
+        <h3>بنية تحتية آمنة وإدارة مركزية</h3>
+        <ul class="bento-list">
+          <li>
+            <strong>معاملات مخزون معزولة (Serializable ACID Transactions)</strong>
+            تنفيذ عمليات إتمام الطلب وتحديث الحالات بمستوى عزل <code>Serializable</code> مع إعادة المحاولة التلقائية عند التعارض (<code>P2034</code>) لضمان دقة الرصيد المتاح والمحجوز.
+          </li>
+          <li>
+            <strong>تخزين سحابي خاص وفحص البصمة الثنائية للصور</strong>
+            رفع الصور عبر روابط موقعة قصيرة الصلاحية (Presigned PUT URLs) إلى Neon S3، مع فحص أول 32 بايت (Magic Bytes) للتحقق من صيغ <code>JPEG/PNG/WebP/AVIF</code> قبل اعتمادها.
+          </li>
+          <li>
+            <strong>لوحة تحكم Mobile-First ونظام صلاحيات (5 أدوار RBAC)</strong>
+            لوحة إدارة مخصصة تدعم قوائم فحص تجهيز الطلبات (Preparation Checklist)، السجل المالي (<code>FinancialTransaction</code>)، الكوبونات والخصومات، وتوزيع الصلاحيات.
+          </li>
+          <li>
+            <strong>حماية متقدمة وتحديد معدل الطلبات (Distributed Rate Limiting)</strong>
+            تشفير كلمات المرور عبر <code>scrypt</code>، وجلسات <code>httpOnly</code>، ومحدد طلبات موزع داخل PostgreSQL يعمل بمبدأ الإغلاق الآمن (Fail-Closed).
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. التقنيات الفعلية والهوية اللونية في بطاقة واحدة -->
+    <section class="tech-and-identity" aria-label="التقنيات المستخدمة والهوية البصرية">
+      <div class="box-header" style="padding-bottom: 14px;">
+        <div>
+          <span class="badge-pill" style="margin-bottom: 6px;">التقنيات والهوية البصرية الفعلية</span>
+          <h2>المكدس التقني (Tech Stack) ونظام ألوان رُوح</h2>
+        </div>
+        <p>جميع التقنيات والألوان أدناه مستخرجة مباشرة من الكود الفعلي للمتجر دون أي إضافات خارجية.</p>
+      </div>
+
+      <div class="tech-pills-grid">
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Next.js (App Router)</strong><code>v16.4.3</code></div>
+          <span>Server Components، Server Actions، وReact Compiler.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>React</strong><code>v19.3.0</code></div>
+          <span>إدارة حالة السلة والمفضلة والإضافة السريعة ولوحة الإدارة.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>TypeScript</strong><code>v5.x</code></div>
+          <span>تنميط صارم للبيانات وحسابات التسعير وانتقالات الطلبات.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>PostgreSQL (Neon)</strong><code>pg 8.23</code></div>
+          <span>قاعدة البيانات العلائقية للمتجر والحجوزات ومحدد الطلبات.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Prisma ORM</strong><code>v7.10.1</code></div>
+          <span>24 جدولاً علائقياً و10 Enums مع Proxy لإدارة الاتصال.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Tailwind CSS v4</strong><code>v4.3.3</code></div>
+          <span>تنسيقات المتجر مع نظام متغيرات CSS الدلالية المخصصة.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Neon S3 + aws4fetch</strong><code>v1.0.20</code></div>
+          <span>روابط رفع موقعة وفحص التوقيع الثنائي للصور المرفوعة.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Telegram Bot &amp; Webhook</strong><code>REST API</code></div>
+          <span>إشعارات المجموعة المقسمة، أزرار الحالات، وتنبيهات المخزون.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Zod Validation</strong><code>v4.6.7</code></div>
+          <span>التحقق من مدخلات الطلبات، السلة، الكوبونات، وبوكسات الهدايا.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Node.js Crypto Auth</strong><code>scrypt</code></div>
+          <span>تشفير كلمات المرور وجلسات الإدارة والزبائن بتجزئة SHA-256.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Lucide React</strong><code>v1.60.0</code></div>
+          <span>الأيقونات التفاعلية في واجهة التسوق ولوحة الإدارة.</span>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-top"><strong>Netlify + OpenNext</strong><code>Production</code></div>
+          <span>منصة النشر الحية للمتجر مع دعم بيئات التشغيل الطرفية.</span>
+        </div>
+      </div>
+
+      <!-- الهوية اللونية (اضغط لنسخ كود اللون) -->
+      <div class="palette-strip" aria-label="الألوان الرسمية لمتجر روح">
+        <button type="button" class="color-chip" data-hex="#F7F2EB">
+          <div class="color-preview" style="background-color: #F7F2EB;"></div>
+          <div class="color-meta"><b>خلفية المتجر</b><code>#F7F2EB</code></div>
+        </button>
+        <button type="button" class="color-chip" data-hex="#EADBD3">
+          <div class="color-preview" style="background-color: #EADBD3;"></div>
+          <div class="color-meta"><b>السطح المميز</b><code>#EADBD3</code></div>
+        </button>
+        <button type="button" class="color-chip" data-hex="#985E60">
+          <div class="color-preview" style="background-color: #985E60;"></div>
+          <div class="color-meta"><b>اللون الأساسي</b><code>#985E60</code></div>
+        </button>
+        <button type="button" class="color-chip" data-hex="#C98D87">
+          <div class="color-preview" style="background-color: #C98D87;"></div>
+          <div class="color-meta"><b>اللون الثانوي</b><code>#C98D87</code></div>
+        </button>
+        <button type="button" class="color-chip" data-hex="#D6A49B">
+          <div class="color-preview" style="background-color: #D6A49B;"></div>
+          <div class="color-meta"><b>شريط التنقل</b><code>#D6A49B</code></div>
+        </button>
+        <button type="button" class="color-chip" data-hex="#493C3A">
+          <div class="color-preview" style="background-color: #493C3A;"></div>
+          <div class="color-meta"><b>الحبر والفوتر</b><code>#493C3A</code></div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 5. دعوة ختامية لزيارة المتجر -->
+    <footer class="final-cta-banner">
+      <div>
+        <h2>جرّب بوتيك رُوح مباشرة — Experience Rouh Boutique</h2>
+        <p>استكشف تجربة التسوق الكاملة وتصميم المتجر الحي عبر الرابط الرسمي.</p>
+      </div>
+
+      <a
+        href="https://rouh-boutique.netlify.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary"
+        style="min-height: 50px; padding: 0 30px; font-size: 0.94rem;"
+      >
+        <span>Visit Live Store — زيارة المتجر الحي</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      // بيانات مراحل دورة حياة الطلب في مجموعة التلغرام المقسمة (مطابقة لـ src/lib/telegram.ts و route.ts)
+      var stages = {
+        NEW: {
+          threadTitle: '🛍️ الموضوع الحالي: الطلبات الجديدة (New Orders Thread)',
+          envVar: 'TELEGRAM_NEW_ORDERS_THREAD_ID',
+          statusLabel: 'الحالة: جديد (NEW)',
+          dbStatus: 'NEW',
+          deliveryStatus: 'PENDING',
+          stockMovement: 'RESERVATION (-3)',
+          message: '🛍️ طلب جديد: #R9K4M2A8\nالاسم: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالعنوان: حي الحسين — قرب الشارع العام\nالمنتجات:\n• شال كشمير روز × 2 — 15,000 د.ع\n• بوكس هدايا رُوح الملكي × 1 — 35,000 د.ع\nالإجمالي: 68,000 د.ع',
+          buttons: [
+            { text: '🧺 بدء التجهيز', next: 'PREPARING', cancel: false },
+            { text: '❌ إلغاء', next: 'RETURNED', cancel: true }
+          ]
+        },
+        PREPARING: {
+          threadTitle: '🧺 الموضوع الحالي: قيد التجهيز والجاهزة (Processing Thread)',
+          envVar: 'TELEGRAM_PROCESSING_THREAD_ID',
+          statusLabel: 'الحالة: قيد التجهيز (PREPARING)',
+          dbStatus: 'PREPARING',
+          deliveryStatus: 'PREPARING',
+          stockMovement: 'RESERVED (قيد التجهيز)',
+          message: '🔔 تحديث الطلب #R9K4M2A8\nالحالة: قيد التجهيز\nالزبون: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالإجمالي: 68,000 د.ع\n\n(تم إخفاء أزرار الرسالة السابقة في موضوع الطلبات الجديدة ونقل المتابعة إلى موضوع التجهيز)',
+          buttons: [
+            { text: '✅ جاهز للتسليم', next: 'READY', cancel: false },
+            { text: '❌ إلغاء', next: 'RETURNED', cancel: true }
+          ]
+        },
+        READY: {
+          threadTitle: '🧺 الموضوع الحالي: قيد التجهيز والجاهزة (Processing Thread)',
+          envVar: 'TELEGRAM_PROCESSING_THREAD_ID',
+          statusLabel: 'الحالة: جاهز للتسليم (READY)',
+          dbStatus: 'READY',
+          deliveryStatus: 'READY',
+          stockMovement: 'RESERVED (جاهز للمندوب)',
+          message: '🔔 تحديث الطلب #R9K4M2A8\nالحالة: جاهز للتسليم\nالزبون: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالإجمالي: 68,000 د.ع',
+          buttons: [
+            { text: '🚚 تسليم للمندوب', next: 'SHIPPED', cancel: false },
+            { text: '❌ إلغاء', next: 'RETURNED', cancel: true }
+          ]
+        },
+        SHIPPED: {
+          threadTitle: '🚚 الموضوع الحالي: مع المندوب (Delivery Thread)',
+          envVar: 'TELEGRAM_DELIVERY_THREAD_ID',
+          statusLabel: 'الحالة: مع المندوب (SHIPPED)',
+          dbStatus: 'SHIPPED',
+          deliveryStatus: 'IN_TRANSIT',
+          stockMovement: 'IN_TRANSIT (محجوز)',
+          message: '🔔 تحديث الطلب #R9K4M2A8\nالحالة: مع المندوب\nالزبون: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالإجمالي: 68,000 د.ع',
+          buttons: [
+            { text: '📦 تم التوصيل', next: 'COMPLETED', cancel: false },
+            { text: '↩️ مرتجع', next: 'RETURNED', cancel: true }
+          ]
+        },
+        COMPLETED: {
+          threadTitle: '📦 الموضوع الحالي: الطلبات الموصلة (Delivered Thread)',
+          envVar: 'TELEGRAM_DELIVERED_THREAD_ID',
+          statusLabel: 'الحالة النهائية: تم التوصيل (COMPLETED)',
+          dbStatus: 'COMPLETED',
+          deliveryStatus: 'DELIVERED',
+          stockMovement: 'SALE (خصم نهائي من المتاح والمحجوز)',
+          message: '🔔 تحديث الطلب #R9K4M2A8\nالحالة: تم التوصيل\nالزبون: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالإجمالي: 68,000 د.ع\n\n✅ تم خصم الكمية نهائياً من المخزون الفعلي وتحديث كاش المتجر.',
+          buttons: []
+        },
+        RETURNED: {
+          threadTitle: '↩️ الموضوع الحالي: المرتجعات والملغاة (Returned Thread)',
+          envVar: 'TELEGRAM_RETURNED_THREAD_ID',
+          statusLabel: 'الحالة النهائية: مرتجع / ملغي (RETURNED)',
+          dbStatus: 'RETURNED',
+          deliveryStatus: 'RETURNED',
+          stockMovement: 'RELEASE (+3 إعادة للمخزون المتاح)',
+          message: '🔔 تحديث الطلب #R9K4M2A8\nالحالة: مرتجع\nالزبون: سارة أحمد\nالهاتف: 0770XXXXXXX\nالمحافظة: كربلاء\nالإجمالي: 68,000 د.ع\n\n↩️ تم تحرير المخزون المحجوز وإعادته إلى الكمية المتاحة للبيع تلقائياً.',
+          buttons: []
+        },
+        INVENTORY: {
+          threadTitle: '⚠️ الموضوع الحالي: تنبيهات المخزون المنخفض (Inventory Thread)',
+          envVar: 'TELEGRAM_INVENTORY_THREAD_ID',
+          statusLabel: 'تنبيه مخزون تلقائي (Low Stock Alert)',
+          dbStatus: 'LOW_STOCK_ALERT',
+          deliveryStatus: '—',
+          stockMovement: 'available <= lowStockThreshold',
+          message: '⚠️ تنبيه مخزون منخفض\n• شال كشمير روز (ROUH-SH-ROSE): المتاح 2، حد التنبيه 3\n• عطر رُوح أو دو بارفيوم (ROUH-PF-01): المتاح 1، حد التنبيه 3',
+          buttons: []
+        }
+      };
+
+      var threadButtons = document.querySelectorAll('.tg-thread-btn[data-stage]');
+      var activeThreadTitle = document.getElementById('activeThreadTitle');
+      var activeThreadEnv = document.getElementById('activeThreadEnv');
+      var simStatusLabel = document.getElementById('simStatusLabel');
+      var simMessageBody = document.getElementById('simMessageBody');
+      var simKeyboard = document.getElementById('simKeyboard');
+      var dbOrderStatus = document.getElementById('dbOrderStatus');
+      var dbDeliveryStatus = document.getElementById('dbDeliveryStatus');
+      var dbStockMovement = document.getElementById('dbStockMovement');
+      var resetSimBtn = document.getElementById('resetSimBtn');
+
+      function renderStage(key) {
+        var data = stages[key] || stages.NEW;
+        activeThreadTitle.textContent = data.threadTitle;
+        activeThreadEnv.textContent = data.envVar;
+        simStatusLabel.textContent = data.statusLabel;
+        simMessageBody.textContent = data.message;
+        dbOrderStatus.textContent = data.dbStatus;
+        dbDeliveryStatus.textContent = data.deliveryStatus;
+        dbStockMovement.textContent = data.stockMovement;
+
+        var sidebarStage = key === 'READY' ? 'PREPARING' : key;
+        threadButtons.forEach(function (btn) {
+          var isMatch = btn.getAttribute('data-stage') === sidebarStage;
+          btn.classList.toggle('is-active', isMatch);
+        });
+
+        simKeyboard.innerHTML = '';
+        data.buttons.forEach(function (btnConfig) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'tg-inline-btn' + (btnConfig.cancel ? ' cancel' : '');
+          b.textContent = btnConfig.text;
+          b.addEventListener('click', function () {
+            renderStage(btnConfig.next);
+          });
+          simKeyboard.appendChild(b);
+        });
+      }
+
+      threadButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          renderStage(btn.getAttribute('data-stage'));
+        });
+      });
+
+      if (resetSimBtn) {
+        resetSimBtn.addEventListener('click', function () {
+          renderStage('NEW');
+        });
+      }
+
+      renderStage('NEW');
+
+      // نسخ كود اللون عند الضغط
+      document.querySelectorAll('.color-chip[data-hex]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var hex = chip.getAttribute('data-hex');
+          var codeEl = chip.querySelector('code');
+          if (navigator.clipboard && hex) {
+            navigator.clipboard.writeText(hex).catch(function () {});
+          }
+          if (codeEl) {
+            var original = codeEl.textContent;
+            codeEl.textContent = 'تم النسخ ✓';
+            setTimeout(function () {
+              codeEl.textContent = original;
+            }, 1200);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
